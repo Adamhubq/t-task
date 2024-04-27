@@ -1,110 +1,102 @@
-<div class="search-container">
-  <div class="search-container__from">
-    <input
-      type="text"
-      [(ngModel)]="fromData"
-      (ngModelChange)="this.searchFrom$.next()"
-      [ngTemplateOutlet]="searchTemplateFrom"
-      [ngTemplateOutletContext]="{ items: searchResponseFromData }"
-    />
-    <ng-template #searchTemplateFrom let-items="items">
-      <div class="search-container__scroll" *ngIf="searchResponseFromData?.length">
-        <div
-          class="search-hint-container"
-        >
-          <div
-            class="search-hint-container__element"
-            (click)="selectedFromStation(item)"
-            *ngFor="let item of items; let i = index"
-          >
-            <span
-              class="search-hint-container__description"
-              [attr.title]="city + ' (' + item.title  + item.station_type_name + ')'"
-              *ngIf="item.title"
-              >{{city}} ({{ item.title }} {{item.station_type_name}})</span
-            >
-            <span class="search-hint-container--grey" *ngIf="item.attributes">{{
-              item.title
-            }}</span>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </div>
-  <div class="search-container__to">
-    <input
-      type="text"
+<div class="container">
+  <div class="card flex justify-content-center m-b-5">
+    <p-autoComplete
+      optionLabel="title"
       [(ngModel)]="toData"
-      (ngModelChange)="this.searchTo$.next()"
-      [ngTemplateOutlet]="searchTemplateTo"
-      [ngTemplateOutletContext]="{ items: searchResponseToData }"
-    />
-    <ng-template #searchTemplateTo let-items="items" >
-      <div class="search-container__scroll" *ngIf="searchResponseToData?.length">
-        <div
-          class="search-hint-container"
-        >
-          <div
-            class="search-hint-container__element"
-            *ngFor="let item of items; let i = index"
-          >
-            <span
-              class="search-hint-container__description"
-              [attr.title]="item.GeoObject.description"
-              *ngIf="item.GeoObject.description"
-              >{{ item.GeoObject.description }}</span
-            >
-            <span class="search-hint-container--grey" *ngIf="item.attributes">{{
-              item.title
-            }}</span>
-          </div>
+      [suggestions]="searchResponseFromData"
+      (completeMethod)="searchStationsFrom($event)"
+    ></p-autoComplete>
+    <p-button (click)="swapStations()" styleClass="m-x-5" icon="pi pi-arrow-right-arrow-left"></p-button>
+    <p-autoComplete
+      optionLabel="title"
+      [(ngModel)]="fromData"
+      [suggestions]="searchResponseToData"
+      (completeMethod)="searchStationsTo($event)"
+    ></p-autoComplete>
+  </div>
+<div class="flex">
+  <p-selectButton
+  [options]="optionsDate"
+  [(ngModel)]="date"
+  optionLabel="icon"
+  optionValue="data"
+  styleClass="p-1 m-b-5"
+>
+  <ng-template let-item pTemplate>
+    <span>{{ item.label }}</span>
+  </ng-template>
+</p-selectButton>
+<p-calendar
+  [(ngModel)]="date"
+  [showIcon]="true"
+  inputId="buttondisplay"
+  styleClass="m-b-5 m-x-5"
+></p-calendar>
+</div>
+
+  <p-selectButton
+    [options]="optionsTypeTransport"
+    [(ngModel)]="transportType"
+    optionValue="data"
+    optionLabel="icon"
+    styleClass="p-1 m-b-5"
+  >
+    <ng-template let-item pTemplate>
+      <img
+        *ngIf="item.src; else labelButton"
+        [src]="item.src"
+        class="m-2"
+        width="20px"
+        height="20px"
+      />
+      <ng-template #labelButton>
+        <span>{{ item.label }}</span>
+      </ng-template>
+    </ng-template>
+  </p-selectButton>
+
+  <p-button (click)="selectedStation()" label="Найти" styleClass="m-b-5"></p-button>
+
+  <div class="scroll">
+    <div class="list-item flex" *ngFor="let cruese of listCruises">
+      <div class="list-item__train-data flex col-6">
+        <img
+          height="15px"
+          width="15px"
+          [attr.src]="iconsTransport[cruese.thread.transport_type]"
+        />
+        <div class="list-item__descr">
+          <p class="text-size-3">{{ cruese.thread.short_title }}</p>
+          <p class="grey text-size-5">{{ cruese.thread.carrier.title }}</p>
+          <p class="grey text-size-7">
+            {{ cruese.thread.transport_subtype.title }}
+          </p>
         </div>
       </div>
-    </ng-template>
+      <div class="list-item__date-start col-2">
+        <p class="grey text-size-7">{{ cruese.departure | date : "d MMM" }}</p>
+        <p class="bold text-size-3">{{ cruese.departure | date : "h:mm" }}</p>
+        <p class="grey text-size-7">{{ cruese.from.title }}</p>
+      </div>
+      <div class="list-item__ride-time col-2">
+        <p class="text-size-3 grey">
+          {{
+            cruese.arrival | deltTime : cruese.departure | number : "1.0-1"
+          }}
+          ч.
+        </p>
+      </div>
+      <div class="list-item__date-end col-3">
+        <p class="grey text-size-7">
+          {{ cruese.arrival | date : "d MMM" }}
+        </p>
+        <p class="text-size-3">
+          {{ cruese.arrival | date : "h:mm" }}
+        </p>
+        <p class="grey text-size-5">
+          {{ cruese.to.title }}
+        </p>
+      </div>
+    </div>
   </div>
-</div>
-<div class="data-container">
-  <button class="">Сегодня</button>
-  <button class="">Завтра</button>
-  <button class="">
-    Дата
-    <svg viewBox="0 0 19 14" id="icon-calendar">
-      <path
-        d="M5 4h4V0H5v4m5 0h4V0h-4v4m5-4v4h4V0h-4M0 9h4V5H0v4m5 0h4V5H5v4m5 0h4V5h-4v4m5 0h4V5h-4v4M0 14h4v-4H0v4m5 0h4v-4H5v4m5 0h4v-4h-4v4"
-        fill-rule="evenodd"
-      ></path>
-    </svg>
-  </button>
-</div>
-<div class="type-transport">
-  <div>
-    <input type="radio" [(ngModel)]="transportType" value="plane,train,suburban,bus">
-    <span>любой</span>
-  </div>
-  <div>
-    <input type="radio" [(ngModel)]="transportType" value="plane">
-    <img height="10px" width="10px" src="/assets/icons/plane-icon.svg" alt="" />
-  </div>
-  <div>
-    <input type="radio" [(ngModel)]="transportType" value="suburban">
-    <img
-      height="10px"
-      width="10px"
-      src="/assets/icons/electric-train-icon.svg"
-      alt=""
-    />
-  </div>
-  <div>
-    <input type="radio" [(ngModel)]="transportType" value="train">
-    <img height="10px" width="10px" src="/assets/icons/train-icon.svg" alt="" />
-  </div>
-  <div>
-    <input type="radio" [(ngModel)]="transportType" value="bus">
-    <img height="10px" width="10px" src="/assets/icons/bus-icon.svg" alt="" />
-  </div>
-</div>
-<button class="search" (click)="search()">Найти</button>
-
-<div class="transport">
-  <div class="transport-item" *ngFor="let cruise of listCruises"></div>
 </div>

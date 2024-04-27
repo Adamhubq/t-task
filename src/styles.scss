@@ -1,2 +1,77 @@
-@import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
-@import '../node_modules/@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+@import "../node_modules/mapbox-gl/dist/mapbox-gl.css";
+@import "../node_modules/@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+@import "../node_modules/primeng/resources/primeng.css";
+
+.container {
+  min-width: 700px;
+  margin: 0 10px;
+}
+
+.col-1 {
+  width: 8.33333333%;
+}
+.col-2 {
+  width: 16.66666667%;
+}
+.col-3 {
+  width: 25%;
+}
+.col-4 {
+  width: 33.33333333%;
+}
+.col-5 {
+  width: 41.66666667%;
+}
+.col-6 {
+  width: 50%;
+}
+.col-7 {
+  width: 58.33333333%;
+}
+.col-8 {
+  width: 66.66666667%;
+}
+.col-9 {
+  width: 75%;
+}
+.col-10 {
+  width: 83.33333333%;
+}
+.col-11 {
+  width: 91.66666667%;
+}
+.col-12 {
+  width: 100%;
+}
+
+.m-b-5 {
+  margin-bottom: 5px;
+}
+
+.m-2 {
+  margin: 2px;
+}
+
+.m-x-5 {
+    margin: 0 5px ;
+}
+
+.text-size-3 {
+  font-size: larger;
+}
+.text-size-5 {
+  font-size: medium;
+}
+.text-size-7 {
+  font-size: smaller;
+}
+.grey {
+  color: grey;
+}
+.bold {
+  font-weight: bold;
+}
+
+.flex {
+  display: flex;
+}

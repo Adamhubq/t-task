@@ -1,30 +1,42 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_KEY_SCHEDULE, API_KEY_SEARCH_CITY, DISTANCE, DOMAIN_SEARCH_CITY, DOMAIN_SHEDULE, LANG, LAT, LNG } from '../constants/api.constants';
+import { TransportType } from '../interfaces/transport.interface';
 
 @Injectable()
 export class ApiSheduleService {
 
   constructor(private _http: HttpClient) { }
 
-  public getSettlement(distance: number) {
-    return this._http.get(`${DOMAIN_SHEDULE}nearest_settlement`, {
+  public getSettlement(reqParams: {
+    distance: number,
+    lat: number,
+    lng: number,
+  }) {
+    return this._http.get(`${DOMAIN_SHEDULE}nearest_settlement/`, {
       params: {
         apikey: API_KEY_SCHEDULE,
-        lat: LAT,
-        lng: LNG,
         lang: LANG,
-        distance
+        ...reqParams
       }
     });
   }
 
-  public schedulePointToPoint() {
+  public schedulePointToPoint(requestParams: {
+    from: string;
+    to: string;
+    date: string;
+    transport_types: TransportType | string;
+  }) {
     return this._http.get(`${DOMAIN_SHEDULE}search`, {
       params: {
         apikey: API_KEY_SCHEDULE,
         lang: LANG,
         format: 'json',
+        from: requestParams.from,
+        to: requestParams.to,
+        transport_types: requestParams.transport_types,
+        date: requestParams.date
       }
     });
   }
@@ -63,7 +75,4 @@ export class ApiSheduleService {
       }
     })
   }
-
-
-
 }

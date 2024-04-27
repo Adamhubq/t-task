@@ -12,12 +12,14 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { DeltTimePipe } from './shared/pipe/delt-time.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapEditorComponent,
-    TransportScheduleComponent
+    TransportScheduleComponent,
+    DeltTimePipe
   ],
   imports: [
     BrowserModule,

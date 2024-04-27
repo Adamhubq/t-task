@@ -4,21 +4,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { area } from '@turf/turf';
 import StylesControl from '@mapbox-controls/styles';
 import '@mapbox-controls/styles/src/index.css';
-
-const accessToken = 'pk.eyJ1IjoibWFyb29uZWRpb25lIiwiYSI6ImNqdmp0MzB1azBpcDAzem1naHZwMjNndGIifQ.65nvvRg9QeFUV2c6b9W4Vw';
-
-export type Style = {
-  label: string;
-  styleName: string;
-  styleUrl: string;
-};
-
-export type StylesControlOptions = {
-  styles?: Style[] | undefined;
-  onChange?: ((style: Style) => void) | undefined;
-  compact?: boolean | undefined;
-};
-
+import { ACCESS_TOKEN } from '../shared/constants/api.constants';
 
 @Component({
   selector: 'app-map-editor',
@@ -33,13 +19,11 @@ export class MapEditorComponent {
   lng: number = -97.7431;
 
   ngOnInit() {
-   
     function updateArea(e: any) {
       const data = draw.getAll();
       const answer: HTMLElement | null = document.getElementById('calculated-area');
       if (data.features.length > 0) {
         const areaData: any = area(data);
-        // Restrict the area to 2 decimal points.
         const rounded_area = Math.round(areaData * 100) / 100;
         if (answer) {
           answer.innerHTML = `<p><strong>${rounded_area}</strong></p><p>square meters</p>`;
@@ -54,7 +38,7 @@ export class MapEditorComponent {
     }
 
     this.map = new mapboxgl.Map({
-      accessToken: accessToken,
+      accessToken: ACCESS_TOKEN,
       container: 'map',
       style: this.style,
       zoom: 13,
@@ -74,19 +58,8 @@ export class MapEditorComponent {
     this.map.on('draw.delete', updateArea);
     this.map.on('draw.update', updateArea);
 
-    // or with compact view and default styles (streets and satellite)
     this.map.addControl(new StylesControl({ compact: true }), 'top-right');
     this.map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-  }
-
-  createPolygon() {
-
-
-    // this.map?.on('draw.create', updateArea);
-    // this.map?.on('draw.delete', updateArea);
-    // this.map?.on('draw.update', updateArea);
-
-    
   }
 }

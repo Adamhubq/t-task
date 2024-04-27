@@ -1,0 +1,110 @@
+<div class="search-container">
+  <div class="search-container__from">
+    <input
+      type="text"
+      [(ngModel)]="fromData"
+      (ngModelChange)="this.searchFrom$.next()"
+      [ngTemplateOutlet]="searchTemplateFrom"
+      [ngTemplateOutletContext]="{ items: searchResponseFromData }"
+    />
+    <ng-template #searchTemplateFrom let-items="items">
+      <div class="search-container__scroll" *ngIf="searchResponseFromData?.length">
+        <div
+          class="search-hint-container"
+        >
+          <div
+            class="search-hint-container__element"
+            (click)="selectedFromStation(item)"
+            *ngFor="let item of items; let i = index"
+          >
+            <span
+              class="search-hint-container__description"
+              [attr.title]="city + ' (' + item.title  + item.station_type_name + ')'"
+              *ngIf="item.title"
+              >{{city}} ({{ item.title }} {{item.station_type_name}})</span
+            >
+            <span class="search-hint-container--grey" *ngIf="item.attributes">{{
+              item.title
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  <div class="search-container__to">
+    <input
+      type="text"
+      [(ngModel)]="toData"
+      (ngModelChange)="this.searchTo$.next()"
+      [ngTemplateOutlet]="searchTemplateTo"
+      [ngTemplateOutletContext]="{ items: searchResponseToData }"
+    />
+    <ng-template #searchTemplateTo let-items="items" >
+      <div class="search-container__scroll" *ngIf="searchResponseToData?.length">
+        <div
+          class="search-hint-container"
+        >
+          <div
+            class="search-hint-container__element"
+            *ngFor="let item of items; let i = index"
+          >
+            <span
+              class="search-hint-container__description"
+              [attr.title]="item.GeoObject.description"
+              *ngIf="item.GeoObject.description"
+              >{{ item.GeoObject.description }}</span
+            >
+            <span class="search-hint-container--grey" *ngIf="item.attributes">{{
+              item.title
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
+<div class="data-container">
+  <button class="">Сегодня</button>
+  <button class="">Завтра</button>
+  <button class="">
+    Дата
+    <svg viewBox="0 0 19 14" id="icon-calendar">
+      <path
+        d="M5 4h4V0H5v4m5 0h4V0h-4v4m5-4v4h4V0h-4M0 9h4V5H0v4m5 0h4V5H5v4m5 0h4V5h-4v4m5 0h4V5h-4v4M0 14h4v-4H0v4m5 0h4v-4H5v4m5 0h4v-4h-4v4"
+        fill-rule="evenodd"
+      ></path>
+    </svg>
+  </button>
+</div>
+<div class="type-transport">
+  <div>
+    <input type="radio" [(ngModel)]="transportType" value="plane,train,suburban,bus">
+    <span>любой</span>
+  </div>
+  <div>
+    <input type="radio" [(ngModel)]="transportType" value="plane">
+    <img height="10px" width="10px" src="/assets/icons/plane-icon.svg" alt="" />
+  </div>
+  <div>
+    <input type="radio" [(ngModel)]="transportType" value="suburban">
+    <img
+      height="10px"
+      width="10px"
+      src="/assets/icons/electric-train-icon.svg"
+      alt=""
+    />
+  </div>
+  <div>
+    <input type="radio" [(ngModel)]="transportType" value="train">
+    <img height="10px" width="10px" src="/assets/icons/train-icon.svg" alt="" />
+  </div>
+  <div>
+    <input type="radio" [(ngModel)]="transportType" value="bus">
+    <img height="10px" width="10px" src="/assets/icons/bus-icon.svg" alt="" />
+  </div>
+</div>
+<button class="search" (click)="search()">Найти</button>
+
+<div class="transport">
+  <div class="transport-item" *ngFor="let cruise of listCruises"></div>
+</div>

@@ -1,0 +1,44 @@
+.search-container {
+    &__scroll{
+        z-index: 999;
+        max-height: 200px;
+        overflow: hidden;
+        overflow-y: auto;
+        position: absolute;
+        display: block;
+        border: 1px solid #000;
+        width: 300px;
+    }
+}
+
+.search-hint-container {
+    background: #fff;
+    box-sizing: border-box;
+    
+  
+    &__element {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      padding: 5px;
+      cursor: pointer;
+  
+      &__active {
+        background-color: #dadada;
+      }
+    }
+  
+    &__description {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  
+    &--grey {
+      color: #dadada;
+    } 
+  
+    .ic {
+      margin-left: 10px;
+    }
+  }

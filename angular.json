@@ -38,7 +38,10 @@
             ],
             "styles": [
               "src/styles.scss",
-              "mapbox-gl/dist/mapbox-gl.css"
+              "mapbox-gl/dist/mapbox-gl.css",
+              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": []
           },
@@ -68,6 +71,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.js",
+            "buildTarget": "t-task:build:development"
+          },
           "configurations": {
             "production": {
               "buildTarget": "t-task:build:production"
@@ -99,7 +106,10 @@
             ],
             "styles": [
               "src/styles.scss",
-              "mapbox-gl/dist/mapbox-gl.css"
+              "mapbox-gl/dist/mapbox-gl.css",
+              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeicons/primeicons.css"
             ],
             "scripts": []
           }

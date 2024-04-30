@@ -10,7 +10,7 @@ export class ExtrudeButtonControl implements mapboxgl.IControl {
     onRemove(){ }
     getDefaultPosition?: (() => string) | undefined;
     onAdd() {
-        const div = document.createElement('div'); 0
+        const div = document.createElement('div');
         const buttonInc = document.createElement('button');
         const buttonDec = document.createElement('button');
         div.classList.add('mapboxgl-ctrl-group', 'mapboxgl-ctrl');
@@ -21,6 +21,7 @@ export class ExtrudeButtonControl implements mapboxgl.IControl {
         buttonDec.innerHTML = '<i class="pi pi-minus-circle"></i>'
         div.appendChild(buttonInc);
         div.appendChild(buttonDec);
-        return div;
+        return div;    
+
     }
 }

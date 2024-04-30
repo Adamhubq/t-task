@@ -14,54 +14,23 @@ import { ExtrudeButtonControl } from './control';
 })
 export class MapEditorComponent {
 
+  private readonly DEFAULT_HEIGHT_EXTRUDE: number = 5;
+
+  style: string = 'mapbox://styles/mapbox/streets-v11';
   map: mapboxgl.Map | undefined;
-  style = 'mapbox://styles/mapbox/streets-v11';
   lat: number = 30.2672;
   lng: number = -97.7431;
-  draw: any;
-
-  updateArea(e: mapboxgl.MapboxEvent) {
-    console.log(e);
-
-    // const data = this.draw.getAll();
-    // const answer: HTMLElement | null = document.getElementById('calculated-area');
-    // if (data.features.length > 0) {
-    //   const areaData: any = area(data);
-    //   console.log(areaData);
-    //   const rounded_area = Math.round(areaData * 100) / 100;
-    //   if (answer) {
-    //     answer.innerHTML = `<p><strong>${rounded_area}</strong></p><p>square meters</p>`;
-    //   }
-    // } else {
-    //   if (answer) {
-    //     answer.innerHTML = '';
-    //     if (e.type !== 'draw.delete')
-    //       alert('Click the map to draw a polygon.');
-    //   }
-    // }
-  }
-
-  zoom(e: mapboxgl.MapboxEvent) {
-    console.log(e.constructor.name);
-    (e.originalEvent as any)?.stopPropagation();
-    (e.originalEvent as any)?.stopPropagation();
-    console.log(e);
-
-    return false
-  }
+  draw!: MapboxDraw;
 
   ngOnInit() {
     this.map = new mapboxgl.Map({
       accessToken: ACCESS_TOKEN,
       container: 'map',
       style: this.style,
-      center: [23.7417, 37.9569],
-      zoom: 15.99,
+      zoom: 17,
+      center: [this.lng, this.lat],
       pitch: 40,
-      bearing: 20,
       antialias: true,
-      // center: [this.lng, this.lat],
-
     });
 
     this.draw = new MapboxDraw({
@@ -73,23 +42,68 @@ export class MapEditorComponent {
       defaultMode: 'draw_polygon'
     });
 
-    console.log(this.draw);
-
-
     this.map.addControl(this.draw, 'top-left')
-    this.map.on('draw.create', this.updateArea);
-    this.map.on('draw.delete', this.updateArea);
-    this.map.on('draw.update', this.updateArea);
-    this.map.on('wheel', this.zoom);
-    this.map.on('zoomstart', this.zoom);
-    this.map.on('zoom', this.zoom);
-    this.map.on('zoomend', this.zoom);
+    this.map.on('draw.create', this.updateArea.bind(this));
+    this.map.on('draw.update', this.updateArea.bind(this));
 
     this.map.addControl(new StylesControl({ compact: true }), 'top-right');
     this.map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    this.map.addControl(new ExtrudeButtonControl(() => console.log(this), () => console.log(this)), 'top-left')
+    this.map.addControl(
+      new ExtrudeButtonControl(
+        () => this._changeExtrude('increment'),
+        () => this._changeExtrude('decrement')), 'top-left')
+  }
+
+  public updateArea() {
+    setTimeout(() => {
+      this._changeExtrude('refresh');
+    }, 0);
+  }
+
+  private _changeExtrude(operation: 'increment' | 'decrement' | 'refresh') {
+    const selectedPolygon = this.draw.getSelected().features[0]?.id as string;
+    if(!selectedPolygon) return
+    const extrude = this.map?.getLayer(`${selectedPolygon}_extrude`);
+
+    if (extrude) {
+      let height = (extrude as any).paint.get('fill-extrusion-height').value.evaluate();
+      // приходится очищать так как с либы обновление не реализовано
+      this.map?.removeLayer(`${selectedPolygon}_extrude`);
+      this.map?.removeSource(`${selectedPolygon}`);
+      switch (operation) {
+        case 'increment':
+          this._renderExtrude(selectedPolygon, ++height)
+          break;
+        case 'decrement':
+          this._renderExtrude(selectedPolygon, --height)
+          break;
+        case 'refresh':
+          this._renderExtrude(selectedPolygon, height)
+          break;
+      }
+
+    } else {
+      this._renderExtrude(selectedPolygon, this.DEFAULT_HEIGHT_EXTRUDE);
+    }
+
+  }
+
+  private _renderExtrude(id: string, height: number) {
+    this.map?.addSource(id, {
+      'type': 'geojson',
+      'data': this.draw.getSelected()
+    });
+    this.map?.addLayer({
+      'id': `${id}_extrude`,
+      'type': 'fill-extrusion',
+      'source': id,
+      'paint': {
+        'fill-extrusion-color': '#dadada',
+        'fill-extrusion-opacity': 0.7,
+        'fill-extrusion-height': ['+', 0, ['number', ['get', 'elev'], height]],
+        'fill-extrusion-base': ['+', 0, ['number', ['get', 'elev'], 0]]
+      }
+    });
   }
 
 }
-
-
